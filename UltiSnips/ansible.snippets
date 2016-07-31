@@ -1,0 +1,97 @@
+global !p
+def complete(t, opts):
+  if t:
+    opts = [ m[len(t):] for m in opts if m.startswith(t) ]
+  if len(opts) == 1:
+    return opts[0]
+
+  return '[' + '|'.join(opts) + ']'
+endglobal
+
+snippet dir "Directory" b
+- name: $1
+  file: path=$2 state=directory $3{owner= group= mode=}
+  $0
+endsnippet
+
+snippet blockinfile "Block in file"
+- name: $1
+  dest: $2
+  blockinfile:
+  block: |
+    $3
+  $0
+endsnippet
+
+snippet lineinfile "Line in file"
+- name: $1
+  lineinfile:
+    dest: $2
+    create: yes
+    state: present
+    line: "$3"
+    regexp: "$4"
+  $0
+endsnippet
+
+snippet meta "Galaxy Mata info"
+galaxy_info:
+  author: ${1:`!v g:snips_author`}
+  description: ${2}
+  license: ${3}
+  min_ansible_version: ${4:2.0}
+  platforms:
+  - name: Debian
+    versions:
+    - all
+  categories: []
+dependencies: [$0]
+endsnippet
+
+snippet npm
+- name: ${1: Install npm packages}
+  npm: name={{item}} global=${3:no}
+  with_items:
+    - $1
+  $0
+endsnippet
+
+snippet shell
+- name: ${1}
+  shell: |
+    ${2}
+  $0
+endsnippet
+
+snippet t
+$1`!p
+tasks = [
+  'blockinfile', 'dir', 'lineinfile', 'link', 'meta', 'npm', 'shell',
+  'template', 'unarchive', 'url'
+]
+snip.rv = complete(t[1], tasks)`
+endsnippet
+
+snippet template
+- name: ${1:}
+  template: src=${2}.j2 dest=${3} ${4:owner= group= mode=}
+  $0
+endsnippet
+
+snippet unarchive
+- name: $1
+  unarchive: src=$2 dest=$3 copy=${4:no}
+  $0
+endsnippet
+
+snippet url
+- name: ${1:}
+  get_url: url=${2} dest=${3}
+  $0
+endsnippet
+
+snippet link
+- name: ${1:}
+  file: src=${2} dest=${3} state=link ${4:owner= group= mode=}
+  $0
+endsnippet

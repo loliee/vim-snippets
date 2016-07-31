@@ -1,0 +1,137 @@
+priority -50
+
+snippet proxy
+server {
+    listen ${1:80};
+    server_name ${2:_};
+
+    location / {
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   Host      $http_host;
+        proxy_pass http://${0:127.0.0.1:80};
+    }
+}
+endsnippet
+
+snippet redirect
+# Temporary redirect 302
+rewrite ^/${1:(.*)\$} ${0:http://localhost/\$1} redirect;
+endsnippet
+
+snippet permanent
+# Permanent redirect 301
+rewrite ^/${1:(.*)\$} ${0:http://localhost/\$1} permanent;
+endsnippet
+
+snippet server
+server {
+    listen ${1:80};
+    server_name ${2:_};
+    root ${0:/var/www/html};
+
+    location / {
+    }
+}
+endsnippet
+
+snippet symfony
+server {
+    server_name ${1:_};
+    root ${2:/var/www/html/};
+
+    location / {
+        # try to serve file directly, fallback to app.php
+        try_files $uri /app.php$is_args$args;
+    }
+    # DEV
+    # This rule should only be placed on your development environment
+    # In production, don't include this and don't deploy app_dev.php or config.php
+    location ~ ^/(app_dev|config)\.php(/|$) {
+        fastcgi_pass ${3:localhost:9000};
+        fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        include fastcgi_params;
+        # When you are using symlinks to link the document root to the
+        # current version of your application, you should pass the real
+        # application path instead of the path to the symlink to PHP
+        # FPM.
+        # Otherwise, PHP's OPcache may not properly detect changes to
+        # your PHP files (see https://github.com/zendtech/ZendOptimizerPlus/issues/126
+        # for more information).
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        fastcgi_param DOCUMENT_ROOT $realpath_root;
+        # fastcgi_param DOCKER 1;
+        fastcgi_param  QUERY_STRING       $query_string;
+        fastcgi_param  REQUEST_METHOD     $request_method;
+        fastcgi_param  CONTENT_TYPE       $content_type;
+        fastcgi_param  CONTENT_LENGTH     $content_length;
+        fastcgi_param  SCRIPT_NAME        $fastcgi_script_name;
+        fastcgi_param  REQUEST_URI        $request_uri;
+        fastcgi_param  DOCUMENT_URI       $document_uri;
+        fastcgi_param  DOCUMENT_ROOT      $document_root;
+        fastcgi_param  SERVER_PROTOCOL    $server_protocol;
+        fastcgi_param  HTTPS              $https if_not_empty;
+        fastcgi_param  GATEWAY_INTERFACE  CGI/1.1;
+        fastcgi_param  SERVER_SOFTWARE    nginx/$nginx_version;
+        fastcgi_param  REMOTE_ADDR        $remote_addr;
+        fastcgi_param  REMOTE_PORT        $remote_port;
+        fastcgi_param  SERVER_ADDR        $server_addr;
+        fastcgi_param  SERVER_PORT        $server_port;
+        fastcgi_param  SERVER_NAME        $server_name;
+        # PHP only, required if PHP was built with --enable-force-cgi-redirect
+        fastcgi_param  REDIRECT_STATUS    200;
+        # https://httpoxy.org/
+        fastcgi_param HTTP_PROXY "";
+    }
+    # PROD
+    location ~ ^/app\.php(/|$) {
+        fastcgi_pass ${0:localhost:9000};
+        fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        include fastcgi_params;
+        # When you are using symlinks to link the document root to the
+        # current version of your application, you should pass the real
+        # application path instead of the path to the symlink to PHP
+        # FPM.
+        # Otherwise, PHP's OPcache may not properly detect changes to
+        # your PHP files (see https://github.com/zendtech/ZendOptimizerPlus/issues/126
+        # for more information).
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        fastcgi_param DOCUMENT_ROOT $realpath_root;
+        # fastcgi_param DOCKER 1;
+        fastcgi_param  QUERY_STRING       $query_string;
+        fastcgi_param  REQUEST_METHOD     $request_method;
+        fastcgi_param  CONTENT_TYPE       $content_type;
+        fastcgi_param  CONTENT_LENGTH     $content_length;
+        fastcgi_param  SCRIPT_NAME        $fastcgi_script_name;
+        fastcgi_param  REQUEST_URI        $request_uri;
+        fastcgi_param  DOCUMENT_URI       $document_uri;
+        fastcgi_param  DOCUMENT_ROOT      $document_root;
+        fastcgi_param  SERVER_PROTOCOL    $server_protocol;
+        fastcgi_param  HTTPS              $https if_not_empty;
+        fastcgi_param  GATEWAY_INTERFACE  CGI/1.1;
+        fastcgi_param  SERVER_SOFTWARE    nginx/$nginx_version;
+        fastcgi_param  REMOTE_ADDR        $remote_addr;
+        fastcgi_param  REMOTE_PORT        $remote_port;
+        fastcgi_param  SERVER_ADDR        $server_addr;
+        fastcgi_param  SERVER_PORT        $server_port;
+        fastcgi_param  SERVER_NAME        $server_name;
+        # PHP only, required if PHP was built with --enable-force-cgi-redirect
+        fastcgi_param  REDIRECT_STATUS    200;
+        # https://httpoxy.org/
+        fastcgi_param HTTP_PROXY "";
+
+        # Prevents URIs that include the front controller. This will 404:
+        # http://domain.tld/app.php/some-path
+        # Remove the internal directive to allow URIs like this
+        internal;
+    }
+
+    # return 404 for all other php files not matching the front controller
+    # this prevents access to other php files you don't want to be accessible.
+    location ~ \.php$ {
+      return 404;
+    }
+
+    error_log /var/log/nginx/error.log;
+    access_log /var/log/nginx/access.log;
+}
+endsnippet

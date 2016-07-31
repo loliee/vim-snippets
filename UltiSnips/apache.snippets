@@ -1,0 +1,11 @@
+priority -50
+
+snippet server
+Listen 80
+<VirtualHost *:${1:80}>
+    ServerName ${2:test.local}
+    ServerAlias ${3:www.test.local}
+    DocumentRoot "${4:/var/www/html}"
+    $0
+</VirtualHost>
+endsnippet
