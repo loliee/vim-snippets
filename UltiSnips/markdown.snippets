@@ -56,12 +56,17 @@ snippet "table(\d+x\d+)" "Customizable table" br
 `!p snip.rv = match.group(1)`
 endsnippet
 
-snippet pr "Pull request template"
+snippet mr "Merge request template"
 ## Description
 
 ${1}
 
+## Tests
+
+${2}
+
 ## Dependencies
 
-${0:n/a}
+${3:${VISUAL:n\/a}}
+
 endsnippet
