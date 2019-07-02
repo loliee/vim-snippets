@@ -2,6 +2,10 @@ snippet #
 #!/usr/bin/env bash
 endsnippet
 
+snippet debug
+[[ $DEBUG -eq 1 ]] && set -o xtrace
+endsnippet
+
 snippet eot
 cat <<EOT >> "${1}"
 ${2:${VISUAL}}
