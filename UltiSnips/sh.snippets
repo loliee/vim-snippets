@@ -38,6 +38,10 @@ snippet popd
 popd &>/dev/null
 endsnippet
 
+snippet er
+echo >&2 "${0}"
+endsnippet
+
 snippet if
 if [[ ${1} ]]; then
   ${2:${VISUAL}}
