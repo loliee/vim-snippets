@@ -63,6 +63,10 @@ done
 $0
 endsnippet
 
+snippet xargs
+xargs -I % -n 1 -P ${0} ${1} %
+endsnippet
+
 snippet args
 SCRIPT=$0
 
