@@ -74,35 +74,37 @@ endsnippet
 snippet args
 SCRIPT=$0
 
-function usage
-{
-   echo
-   echo "     -- Aide --     " $INFO
-   echo
-   echo -e " \033[4mUsage :\033[0m $SCRIPT -p <nim_port>"
-   echo
-   echo "          Options :"
-   echo "              -h (optionnel)   : affiche cette aide"
-   echo "              -p (obligatoire) : numéro de port utilisé par solo"
-   echo
-   echo -e " \033[4mExemples :\033[0m "
-   echo -e "       $SCRIPT -p 7001"
-   echo
+function usage {
+  echo -e "\033[4mUsage :\033[0m $SCRIPT -d"
+  echo
+  echo "          Options :"
+  echo "              -h (optional) : display this help."
+  echo "              -n (optional) : disable color output."
+  echo "              -d (mandatory) : directory where you gonna do something..."
+  echo
+  echo -e "\033[4mExample :\033[0m "
+  echo -e "      $SCRIPT -d \${HOME}/Dev"
+  echo
 
-   exit 255
+  exit 255
 }
 
-
-# Lecture des parametres
-o_port=""
-while getopts "p:h" options; do
-   case $options in
-      p) o_port=$OPTARG
-         ;;
-    h|?) usage
-         ;;
-      *) usage
-         ;;
+dir=
+while getopts "hnd:" options; do
+  case $options in
+  n)
+    # no-color
+    ;;
+  d)
+    dir=$OPTARG
+    # do something
+    ;;
+  h|?)
+    usage
+    ;;
+  *)
+    usage
+    ;;
   esac
 done
 endsnippet
