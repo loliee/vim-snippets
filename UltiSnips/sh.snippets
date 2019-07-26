@@ -27,6 +27,21 @@ snippet &>
 &>/dev/null
 endsnippet
 
+snippet prompt
+read -r -p "blahblah (y/n)? " choice
+case "$choice" in
+  y|Y )
+    echo 'yes'
+    ;;
+  n|N )
+    echo 'no'
+    ;;
+  * )
+    echo 'invalid choice'
+    ;;
+esac
+endsnippet
+
 snippet pushd
 pushd "${1}" &>/dev/null
   ${2:${VISUAL}}
